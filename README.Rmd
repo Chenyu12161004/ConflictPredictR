@@ -3,7 +3,7 @@ title: "README"
 output: github_document
 ---
 
-# PathoPrediction: A Focused Pathogenicity Predictor
+# ConflictPredictR: Predicting Interpretive Conflicts in Genetic Variants
 
 <!-- badges: start -->
 [![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -12,26 +12,30 @@ output: github_document
 
 ## Overview
 
-`PathoPrediction` is a tool for predicting the pathogenicity of human genetic variants based on a set of genomic and computational features, using pre-trained Random Forest model(at 80% split). This model was chosen over other alternatives, XGBoost and Random Forest (at 90% split), for its higher AUROC and especially better sensitivity in identifying potentially harmful variants. The package provides functions  for prediction. It also offers visualizations to explain model behavior, including feature importance bar plots and diagnostic charts (OOB error and confusion matrix). 
+Conflicting interpretations of genetic variants in clinical databases represent a significant challenge, creating uncertainty for clinicians and patients. `ConflictPredictR` is a tool designed to address this problem by predicting the likelihood that a variant will have a conflicting classification.
+
+Based on a pre-trained Random Forest model, this package calculates a **"Conflict Risk Score"** for new variants. The model was chosen over other alternatives for its robust performance and higher sensitivity in identifying variants prone to conflicting interpretations. In addition to prediction, the package provides functions for data validation and visualizations to explain which genomic features most strongly drive interpretive uncertainty.
 
 ## Key Features
 
-*   **Focused Prediction**: Deliver pathogenicity predictions using a single, robust Random Forest model. This approach prioritizes high sensitivity to ensure potentially harmful variants are effectively identified.
+*   **Conflict Risk Prediction**: Delivers a "Conflict Risk Score" using a robust Random Forest model to identify variants prone to interpretive conflict.
 
-*   **Clear Feature Insights**: Help to understand model behavior with clear plots for feature importance (`plot_rf_importance()`) and model diagnostics (`plot_rf_diagnostics()`).
+*   **Insightful Visualizations**: Understand the drivers of interpretive uncertainty with plots for feature importance (`plot_rf_importance()`) and model diagnostics (`plot_rf_diagnostics()`).
 
-*   **User-Friendly Data Validation**: Include a built-in validation function, `validate_input_data()`, that checks the input data for common formatting issues and provides clear error messages.
+*   **User-Friendly Data Validation**: Includes a `validate_input_data()` function that checks user data for common formatting issues and provides clear, actionable error messages.
 
-*   **Rigorously Tested**: The package is equipped with a suite of automated tests to ensure functions behave reliably and predictably, giving users confidence in the results.
+*   **Rigorously Tested**: The package is equipped with a suite of automated tests (`testthat`) and continuous integration to ensure functions behave reliably.
 
 *   **Transparent Model Selection**: The package includes a performance comparison table, openly showing why the Random Forest model (at 80% split) was chosen over XGBoost and Random Forest (at 90% split) for this specific task.
     
 
 ## Model Selection
 
-This package is built around a single Random Forest (RF) model (at 80% split). During development, other models like XGBoost were also evaluated. While all these models showed well enough overall performance, the Random Forest model demonstrated higher Sensitivity. This means it is better at correctly identifying true pathogenic variants, which minimizes the risk of missing a potentially significant variant, providing a more cautious and reliable result. 
+This package is built around a single Random Forest (RF) model. During development, other models like XGBoost were also evaluated. While all models showed reasonable overall performance, this specific RF model(at 80% split) demonstrated higher Sensitivity in the task of identifying conflict-prone variants (i.e., correctly identifying variants with CLASS = 1).
 
-```{r performance-table, echo=FALSE}
+This means the model is better at flagging variants that are genuinely complex and likely to cause debate among experts. Minimizing false negatives (i.e., failing to flag a truly conflict-prone variant) ensures that this pre-warning system is effective.
+
+```{r performance-table, echo=FALSE, message=FALSE, warning=FALSE}
 devtools::load_all()
 knitr::kable(
   performance_metrics,
@@ -54,44 +58,45 @@ The performance of the Random Forest model (at 80% split) was evaluated using AU
 
 ## Installation
 
-You can install the development version of `PathoPrediction` from GitHub with:
+You can install the development version of `ConflictPredictR` from GitHub with:
 
 ``` r
 # install.packages("devtools")
-# devtools::install_github("Chenyu12161004/PathoPrediction")
+# devtools::install_github("Chenyu12161004/ConflictPredictR")
 ```
 
 ## Usage
 
 First, load the package:
-```{r example-load-package}
+```{r example-load-package, message=FALSE, warning=FALSE}
 devtools::load_all()
 ```
 
 ### Data validation
 
-Before making predictions, it is a good practice to validate the input data. The `validate_input_data()` function checks for required columns and data types.
-```{r validation-example}
+Before making predictions, it is a good practice to validate the input data. The `validate_input_data()` function checks for requirements.
+```{r validation-example, message=FALSE, warning=FALSE}
 # Validate the built-in sample data (this should pass)
 validate_input_data(sample_variants)
 ```
 
 ### Predict Pathogenicity
 
-Use `predict_pathogenicity()` on the sample data to get predictions. The function returns the predicted class and the probability of the variant being pathogenic (class "1").
+Use `predict_conflict_risk()` on the sample data to get a risk score for each variant.
 
-```{r prediction-example}
+```{r prediction-example, message=FALSE, warning=FALSE, results='hide'}
 # Use the sample data included in the package
-predictions <- predict_pathogenicity(sample_variants)
+predictions <- predict_conflict_risk(sample_variants)
 
 # View the key prediction results
-result_subset <- predictions[, c("CADD_PHRED", "CADD_RAW", ".pred_class", ".pred_prob_pathogenic")]
+result_subset <- predictions[, c("CADD_PHRED", "CADD_RAW", ".pred_conflict_class", ".pred_conflict_risk")]
 knitr::kable(head(result_subset))
 ```
 Explanation of the new columns in the report:
 
-* `.pred_class`: The final classification from the Random Forest model (1 = pathogenic, 0 = benign).
-* `pred_prob_pathogenic`: The probability that the variant is pathogenic (class "1"), according to the model. 
+* `.pred_conflict_class`: The final classification (1 = High Conflict Risk, 0 = Low Conflict Risk).
+* `.pred_conflict_risk`: A score from 0 to 1 representing the predicted probability of the model that the variant will have a conflicting interpretation.
+ 
 
 ### Visualization: Understand Model Behavior
 
@@ -99,21 +104,21 @@ The package provides two functions to visualize what drives the decisions of the
 
 #### Feature Importance
 
-`plot_rf_importance()` generates a bar chart showing which features had the most influence on the model's predictions.
+`plot_rf_importance()` shows which features most influence the conflict risk predictions of the model.
 
-```{r importance-plot, fig.width=8, fig.height=6}
+```{r importance-plot, fig.width=7, fig.height=4, message=FALSE, warning=FALSE}
 plot_rf_importance()
 ```
 
 #### Model Diagnostics
 
-`plot_rf_diagnostics()` demonstrates the internal performance of the model, showing the Out-of-Bag (OOB) error rate during training and the final confusion matrix.
+`plot_rf_diagnostics()` displays the internal training performance of the model and its ability to classify variants based on their conflict potential.
 
-* **Out-of-Bag (OOB) Error Rate**: This plot shows the error rate of the model as it was being trained. It is generated from data stored within the model object itself and is therefore static. It reflects the internal performance of the model during its creation.
+*   **Out-of-Bag (OOB) Error Rate**: This plot shows the error rate of the model as it was being trained to distinguish between conflict-prone and consensus variants. It is generated from data stored within the model object and is static, reflecting the learning process of the model.
 
-* **Confusion Matrix**: This plot evaluates performance of the model on a specific dataset. By default, it uses the built-in sample_variants data. If you provide your own newdata, this plot will update to show the accuracy of the model on that specific data.
+*   **Confusion Matrix**: This plot evaluates the classification performance of the model on a specific dataset. It shows how well the model distinguishes between "High Conflict Risk" (`1`) and "Low Conflict Risk" (`0`) variants. By default, it uses the internal OOB data of the model. If you provide your own `newdata`, this plot will update to show the performance on that specific data.
 
-```{r diagnostics-plot, fig.width=10, fig.height=5}
+```{r diagnostics-plot, fig.width=10, fig.height=5, message=FALSE, warning=FALSE}
 plot_rf_diagnostics()
 ```
 

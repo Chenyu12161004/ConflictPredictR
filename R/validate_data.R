@@ -1,7 +1,7 @@
 #' Validate Input Data for Prediction
 #'
 #' Checks if a new dataset has the structure and data types required by the
-#' prediction model in `PathoPrediction`.
+#' prediction model in `ConflictPredictR`.
 #'
 #' @param newdata A data frame of new variants to validate.
 #' @return Returns `TRUE` (invisibly) if the data is valid. If validation fails,
@@ -9,10 +9,10 @@
 #' @export
 #' @examples
 #' # This will pass validation and print success messages
-#' try(validate_input_data(PathoPrediction::sample_variants))
+#' try(validate_input_data(ConflictPredictR::sample_variants))
 #'
 #' # This example demonstrates a failure due to a missing column
-#' bad_data <- PathoPrediction::sample_variants
+#' bad_data <- ConflictPredictR::sample_variants
 #' bad_data$CADD_PHRED <- NULL # Remove a required column
 #' try(validate_input_data(bad_data))
 validate_input_data <- function(newdata) {
@@ -20,7 +20,7 @@ validate_input_data <- function(newdata) {
   message("Starting Data Validation")
 
   # Load the internal recipe of package to know the requirements
-  recipe_obj <- readRDS(system.file("extdata", "preprocessing_recipe.rds", package = "PathoPrediction"))
+  recipe_obj <- readRDS(system.file("extdata", "preprocessing_recipe.rds", package = "ConflictPredictR"))
 
   original_vars <- recipe_obj$var_info$variable
 

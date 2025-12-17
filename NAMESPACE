@@ -2,7 +2,7 @@
 
 export(plot_rf_diagnostics)
 export(plot_rf_importance)
-export(predict_pathogenicity)
+export(predict_conflict_risk)
 export(validate_input_data)
 import(randomForest)
 importFrom(dplyr,arrange)

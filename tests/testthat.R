@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(PathoPrediction)
+library(ConflictPredictR)
 
-test_check("PathoPrediction")
+test_check("ConflictPredictR")

@@ -4,7 +4,7 @@ usethis::use_data(DATASET, overwrite = TRUE)
 
 library(tidyverse)
 
-full_data <- read_csv("~/Desktop/capstone project/PathoPrediction/data-raw/clinvar_conflicting.csv")
+full_data <- read_csv("~/Desktop/capstone project/ConflictPredictR/data-raw/clinvar_conflicting.csv")
 
 set.seed(215)
 sample_variants <- full_data %>%

@@ -16,7 +16,7 @@
 plot_rf_importance <- function(top_n = 20) {
 
   message("Loading Random Forest model...")
-  model_rf <- readRDS(system.file("extdata", "final_rf_model.rds", package = "PathoPrediction"))
+  model_rf <- readRDS(system.file("extdata", "final_rf_model.rds", package = "ConflictPredictR"))
 
   importance_df <- as.data.frame(model_rf$importance) %>%
     tibble::rownames_to_column("feature") %>%
@@ -63,12 +63,12 @@ plot_rf_importance <- function(top_n = 20) {
 #' plot_rf_diagnostics()
 #'
 #' # This shows the OOB error and a new confusion matrix based on sample_variants
-#' plot_rf_diagnostics(PathoPrediction::sample_variants)
+#' plot_rf_diagnostics(ConflictPredictR::sample_variants)
 #' }
 plot_rf_diagnostics <- function(newdata = NULL) {
 
   message("Loading Random Forest model...")
-  model_rf <- readRDS(system.file("extdata", "final_rf_model.rds", package = "PathoPrediction"))
+  model_rf <- readRDS(system.file("extdata", "final_rf_model.rds", package = "ConflictPredictR"))
 
   # OOB Error Plot
   if(!is.null(model_rf$err.rate)) {
@@ -80,9 +80,9 @@ plot_rf_diagnostics <- function(newdata = NULL) {
     )
 
     p_error <- ggplot(err_rate_df, aes(x = trees)) +
-      geom_line(aes(y = oob_error, color = "OOB Error"), size = 1) +
-      geom_line(aes(y = class0_error, color = "Class 0 Error"), size = 0.7, alpha = 0.7) +
-      geom_line(aes(y = class1_error, color = "Class 1 Error"), size = 0.7, alpha = 0.7) +
+      geom_line(aes(y = .data$oob_error, color = "OOB Error"), linewidth = 1) +
+      geom_line(aes(y = .data$class0_error, color = "Class 0 Error"), linewidth = 0.7, alpha = 0.7) +
+      geom_line(aes(y = .data$class1_error, color = "Class 1 Error"), linewidth = 0.7, alpha = 0.7) +
       labs(
         title = "Random Forest Error Rates (during training)",
         x = "Number of Trees", y = "Error Rate", color = "Error Type"
@@ -115,7 +115,7 @@ plot_rf_diagnostics <- function(newdata = NULL) {
   } else {
     # User provides newdata. Calculate a new confusion matrix.
     message("Calculating confusion matrix based on provided 'newdata'...")
-    recipe_obj <- readRDS(system.file("extdata", "preprocessing_recipe.rds", package = "PathoPrediction"))
+    recipe_obj <- readRDS(system.file("extdata", "preprocessing_recipe.rds", package = "ConflictPredictR"))
 
     if (!"CLASS" %in% colnames(newdata)) {
       stop("The 'CLASS' column is missing from the input 'newdata'.")

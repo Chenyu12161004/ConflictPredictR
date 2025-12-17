@@ -27,6 +27,6 @@ on that data; otherwise, it defaults to showing the performance on the OOB sampl
 plot_rf_diagnostics()
 
 # This shows the OOB error and a new confusion matrix based on sample_variants
-plot_rf_diagnostics(PathoPrediction::sample_variants)
+plot_rf_diagnostics(ConflictPredictR::sample_variants)
 }
 }

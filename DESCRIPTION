@@ -1,16 +1,14 @@
-Package: PathoPrediction
-Title: Predict Pathogenicity of Genetic Variants using a Random Forest Model
+Package: ConflictPredictR
+Title: Predict the Risk of Conflicting Interpretations for Human Genetic Variants
 Version: 1.0.0
 Authors@R: 
     person("Chenyu", "Luo", , "xiangcaiqiyijunluo@gmail.com", role = c("aut", "cre"))
 Description: 
-    This package predicts the pathogenicity (benign vs. pathogenic) of human 
-    genetic variants based on a set of genomic and computational features, using pre-trained 
-    Random Forest model. This model was chosen over another alternative, XGBoost, for its
-    higher sensitivity in identifying potentially harmful variants. The package provides functions 
-    for prediction. It also offers visualizations to explain model behavior, 
-    including feature importance bar plots and diagnostic charts (OOB error and confusion
-    matrix). 
+    This package predicts the likelihood that a human genetic variant will have a conflicting 
+    clinical interpretation based on a set of genomic and computational features, using pre-trained 
+    Random Forest model. The package provides functions for prediction. It also offers visualizations 
+    to explain model behavior, including feature importance bar plots and diagnostic charts 
+    (OOB error and confusion matrix). 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

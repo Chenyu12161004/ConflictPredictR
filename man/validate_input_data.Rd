@@ -15,14 +15,14 @@ it stops and prints an informative error message.
 }
 \description{
 Checks if a new dataset has the structure and data types required by the
-prediction model in \code{PathoPrediction}.
+prediction model in \code{ConflictPredictR}.
 }
 \examples{
 # This will pass validation and print success messages
-try(validate_input_data(PathoPrediction::sample_variants))
+try(validate_input_data(ConflictPredictR::sample_variants))
 
 # This example demonstrates a failure due to a missing column
-bad_data <- PathoPrediction::sample_variants
+bad_data <- ConflictPredictR::sample_variants
 bad_data$CADD_PHRED <- NULL # Remove a required column
 try(validate_input_data(bad_data))
 }
