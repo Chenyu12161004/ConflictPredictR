@@ -98,6 +98,10 @@ GitHub with:
 ``` r
 # install.packages("devtools")
 # devtools::install_github("Chenyu12161004/ConflictPredictR")
+#
+# # Note: If you cannot install the package through the provided way, try following:
+# options(timeout = 600)
+# devtools::install_github("Chenyu12161004/ConflictPredictR")
 ```
 
 ## Usage
